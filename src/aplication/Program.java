@@ -16,53 +16,34 @@ public class Program {
 		
 		
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	
 		Connection conn = null;
-		Statement st = null;
-		/*PreparedStatement st = null;*/
+		PreparedStatement st = null;
 		
 		try {
-			conn = DB.getConnection();
-			/*
-			st = conn.prepareStatement(
-					"INSERT INTO seller"
-					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId)"
-					+ "VALUES"
-					+ "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-			
-					
-			st.setString(1,"Krishna Costinha");
-			st.setString(2, "krishna@gmai.com");
-			st.setDate(3, new java.sql.Date(sdf.parse("28/02/2019").getTime()));
-			st.setDouble(4, 3000.00);
-			st.setInt(5, 2);
-			
-			
-			st = conn.prepareStatement("insert into department (Name) values ('D1'), ('D2')", Statement.RETURN_GENERATED_KEYS);
-			
-			int rows = st.executeUpdate();
-			
-			if(rows > 0 ) {
-				ResultSet rs = st.getGeneratedKeys();
-				while(rs.next()) {
-					int id = rs.getInt(1);
-					System.out.println("Done! Id = " + id);
-				}
-			}else {
-				System.out.println("No rows affected");
-			}*/
-			
 		
+			conn = DB.getConnection();
+			st = conn.prepareStatement(
+				"UPDATE seller " 
+				+ "SET BaseSalary = BaseSalary - ? "
+				+ "WHERE "
+				+ "(DepartmentId = ? )", Statement.RETURN_GENERATED_KEYS);
+		
+			st.setDouble(1, 200);
+			st.setInt(2, 2);
 			
-			st = conn.createStatement();
+			/*int row = st.executeUpdate();
 			
+			System.out.println("Done! AffectRow: " + row);
+			*/
+			ResultSet rs = st.getGeneratedKeys();
 			
-			ResultSet rs = st.executeQuery("select Email from seller");
+				while(rs.next()) {
+					System.out.println(rs.getString("DepartmentId"));
+				}
+		
+
 			
-			while(rs.next()) {
-				System.out.println(rs.getString("Email"));
-			}
-						
 		
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -73,7 +54,7 @@ public class Program {
 		
 		
 		finally {
-		DB.closeStatament(null);
+		DB.closeStatament(st);
 		DB.closeConnection();
 		
 		}
